@@ -507,7 +507,7 @@ function TournamentScreen({ tour, playerId, tournamentId, tournamentName, onBack
 }
 
 // ---------- app shell ----------
-export default function TennisStatsPrototype() {
+function TennisStatsPrototype() {
   const [nav, setNav] = useState({ screen: 'search' });
 
   return (
