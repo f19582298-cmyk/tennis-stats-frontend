@@ -573,4 +573,68 @@ export default function TennisStatsPrototype() {
   );
 }
 
-export default TennisStatsPrototype;
+export default function App() {
+  const [nav, setNav] = useState({ screen: 'search' });
+
+  return (
+    <div style={{ background: C.bg, minHeight: 500, padding: '24px 16px', fontFamily: fontBody }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@600;700&display=swap');
+      `}</style>
+      <div style={{ maxWidth: 380, margin: '0 auto' }}>
+        {nav.screen === 'search' && (
+          <SearchScreen
+            onSelectPlayer={(tour, id) => setNav({ screen: 'profile', tour, playerId: id })}
+          />
+        )}
+
+        {nav.screen === 'profile' && (
+          <ProfileScreen
+            tour={nav.tour}
+            playerId={nav.playerId}
+            onBack={() => setNav({ screen: 'search' })}
+            onOpenTournament={(tournamentId, tour, playerId) =>
+              setNav({ screen: 'tournament', tour, playerId, tournamentId, prev: nav })
+            }
+            onOpenPickOpponent={(baseName) =>
+              setNav({ screen: 'pick-opponent', tour: nav.tour, baseId: nav.playerId, baseName, prev: nav })
+            }
+          />
+        )}
+
+        {nav.screen === 'pick-opponent' && (
+          <PickOpponentScreen
+            tour={nav.tour}
+            baseId={nav.baseId}
+            baseName={nav.baseName}
+            onBack={() => setNav(nav.prev)}
+            onPicked={(oppId, oppName) =>
+              setNav({ screen: 'h2h', tour: nav.tour, aId: nav.baseId, bId: oppId, aName: nav.baseName, bName: oppName, prev: nav.prev })
+            }
+          />
+        )}
+
+        {nav.screen === 'h2h' && (
+          <H2HScreen
+            tour={nav.tour}
+            aId={nav.aId}
+            bId={nav.bId}
+            aName={nav.aName}
+            bName={nav.bName}
+            onBack={() => setNav(nav.prev || { screen: 'search' })}
+          />
+        )}
+
+        {nav.screen === 'tournament' && (
+          <TournamentScreen
+            tour={nav.tour}
+            playerId={nav.playerId}
+            tournamentId={nav.tournamentId}
+            tournamentName={nav.tournamentName}
+            onBack={() => setNav(nav.prev || { screen: 'search' })}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
